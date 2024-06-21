@@ -1,38 +1,27 @@
+// backend/server.js
 const express = require('express');
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-app.use(express.json());
+const PORT = process.env.PORT || 5000;
+
+// Middleware
 app.use(cors());
+app.use(bodyParser.json());
 
-mongoose.connect('mongodb://localhost:27017/mern-login', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
-
-const userSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  password: { type: String, required: true }
-});
-
-const User = mongoose.model('User', userSchema);
-
-app.post('/login', async (req, res) => {
+// Routes
+app.post('/login', (req, res) => {
   const { username, password } = req.body;
-
-  const user = await User.findOne({ username });
-  if (!user) return res.status(400).send('User not found');
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) return res.status(400).send('Invalid password');
-
-  const token = jwt.sign({ id: user._id }, 'secret', { expiresIn: '1h' });
-  res.send({ token });
+  // Validate username and password (dummy example)
+  if (username === 'admin' && password === 'admin') {
+    res.status(200).json({ message: 'Login successful' });
+  } else {
+    res.status(401).json({ message: 'Login failed' });
+  }
 });
 
-app.listen(5000, () => {
-  console.log('Server is running on port 5000');
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
