@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +14,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // eslint-disable-next-line no-unused-vars
       const res = await axios.post('http://localhost:5000/login', { username, password });
       setMessage('Login successful');
       // Navigate based on selectedRole
@@ -71,7 +73,7 @@ const Login = () => {
             />
           </div>
           <button type="submit">Login</button>
-          <p>Forgot your password?</p>
+         <p><a href='#'>Forgot your password?</a></p>
         </form>
         {message && <p className="message">{message}</p>}
       </div>
