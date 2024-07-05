@@ -1,0 +1,88 @@
+/* General Container Styling */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #1c1e29; /* Darker background for contrast */
+}
+
+/* Login Box Styling */
+.login-box {
+  background: #282a36;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: #fff; /* Light text for contrast on dark background */
+}
+
+/* Logo Styling */
+.logo img {
+  width: 50px;
+  margin-bottom: 10px;
+}
+
+.logo h1 {
+  font-size: 24px;
+  margin: 0;
+}
+
+/* Form Styling */
+form {
+  margin-top: 20px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group .input-select,
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  color: #333;
+  transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transition for focus state */
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+/* Add focus and hover states for input fields */
+.input-group .input-select:focus,
+.input-group input:focus {
+  border-color: #4aee88; /* Green border on focus */
+  box-shadow: 0 0 5px rgba(74, 238, 136, 0.5); /* Light shadow on focus */
+  outline: none; /* Remove default focus outline */
+}
+
+/* Button Styling */
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4aee88; /* Green button background */
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s; /* Smooth transitions */
+}
+
+button:hover {
+  background-color: #2b824c; /* Darker green on hover */
+  transform: scale(1.02); /* Slightly scale button on hover */
+}
+
+/* Paragraph Styling */
+p {
+  margin-top: 10px;
+  color: #f5f5f5; /* Light text color */
+}
+
+/* Message Styling */
+.message {
+  margin-top: 20px;
+  color: red; /* Red color for error message */
+}
