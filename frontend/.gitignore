@@ -17,8 +17,15 @@
 .env.development.local
 .env.test.local
 .env.production.local
+<<<<<<< HEAD
 .env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 /backend/.env
+=======
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+>>>>>>> c06fb41ce187a9fbaf9f544c828ac29b37acf51b

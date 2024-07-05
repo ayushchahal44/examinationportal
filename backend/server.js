@@ -1,8 +1,15 @@
+<<<<<<< HEAD
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
 require('dotenv').config();
+=======
+// backend/server.js
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+>>>>>>> c06fb41ce187a9fbaf9f544c828ac29b37acf51b
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -11,7 +18,11 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
+<<<<<<< HEAD
 // Login Route
+=======
+// Routes
+>>>>>>> c06fb41ce187a9fbaf9f544c828ac29b37acf51b
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
   // Validate username and password (dummy example)
@@ -22,6 +33,7 @@ app.post('/login', (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // Exam Creation Route
 app.post('/api/createExam', async (req, res) => {
   const { examType, subjectName, numQuestions, numMcqs, numTheory } = req.body;
@@ -63,6 +75,8 @@ app.post('/api/createExam', async (req, res) => {
   }
 });
 
+=======
+>>>>>>> c06fb41ce187a9fbaf9f544c828ac29b37acf51b
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
