@@ -2,6 +2,8 @@
 import React from 'react';
 import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import './TeacherDashboard.css';
+import { useNavigate } from 'react-router-dom';
+
 
 // Import your page components from the Admin folder
 import Dashboard from './Teacher/Dashboard';
@@ -11,6 +13,14 @@ import Results from './Teacher/Results';
 import NotFound from './Teacher/NotFound';
 
 const TeacherDashboard = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    // Add your logout logic here (e.g., clearing authentication tokens)
+    console.log("Logout clicked");
+    navigate("/"); // Redirect to login page
+  };
   return (
     <div className="teacher-dashboard-container">
       <div className="left-container">
@@ -26,6 +36,9 @@ const TeacherDashboard = () => {
           <Link to="exams" className="menu-item">Exams</Link>
           <Link to="results" className="menu-item">Results</Link>
         </div>
+        <div className="button-container">
+            <a href="/" onClick={handleLogout} className="logout-button">Logout</a>
+          </div>
       </div>
       <div className="right-container">
         <Routes>

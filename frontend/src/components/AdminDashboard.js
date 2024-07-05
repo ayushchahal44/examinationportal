@@ -1,44 +1,37 @@
-// AdminDashboard.js
 import React from 'react';
-import { Routes, Route, Link, Navigate } from 'react-router-dom';
-import './AdminDashboard.css';
 
-// Import your page components from the Admin folder
-import Dashboard from './Admin/Dashboard';
-import Register from './Admin/Register';
-import Exams from './Admin/Exams';
-import Results from './Admin/Results';
-import NotFound from './Admin/NotFound';
+const Dashboard = () => {
+  // Sample data for today's available tests and recent attempted tests
+  const todayTests = ['Test 1', 'Test 2', 'Test 3'];
+  const recentTests = ['Test 4', 'Test 5', 'Test 6'];
 
-const AdminDashboard = () => {
   return (
-    <div className="admin-dashboard-container">
-      <div className="left-container">
-        <div className='profile-picture-container'>
-          <div className='profile-picture'>
-            <img src='/favicon.ico' alt='Profile' />
-          </div>
-          <h1 className='admin-dashboard'>Admin Dashboard</h1>
+    <div>
+      <h2>Dashboard Page</h2>
+
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+        {/* Container for today's available tests */}
+        <div style={{ flex: 1, backgroundColor: '#f0f0f0', padding: '20px', borderRadius: '8px' }}>
+          <h3>Today's Available Tests</h3>
+          <ul>
+            {todayTests.map((test, index) => (
+              <li key={index}>{test}</li>
+            ))}
+          </ul>
         </div>
-        <div className='admin-dashboard-menu'>
-          <Link to="dashboard" className="menu-item">Dashboard</Link>
-          <Link to="register" className="menu-item">Register</Link>
-          <Link to="exams" className="menu-item">Exams</Link>
-          <Link to="results" className="menu-item">Results</Link>
+
+        {/* Container for recent attempted tests */}
+        <div style={{ flex: 1, backgroundColor: '#e0e0e0', padding: '20px', borderRadius: '8px' }}>
+          <h3>Recent Attempted Tests</h3>
+          <ul>
+            {recentTests.map((test, index) => (
+              <li key={index}>{test}</li>
+            ))}
+          </ul>
         </div>
-      </div>
-      <div className="right-container">
-        <Routes>
-          <Route path="/" element={<Navigate to="dashboard" />} /> {/* Default Route */}
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="register" element={<Register />} />
-          <Route path="exams" element={<Exams />} />
-          <Route path="results" element={<Results />} />
-          <Route path="*" element={<NotFound />} /> {/* Fallback for unmatched routes */}
-        </Routes>
       </div>
     </div>
   );
 };
 
-export default AdminDashboard;
+export default Dashboard;
