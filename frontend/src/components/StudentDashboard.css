@@ -75,4 +75,30 @@
   .menu-item:last-child {
     margin-bottom: 0;
   }
-  
+.button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 20px; /* Aligns the button at the very bottom */
+  left: 0;
+  background-color: #1c1e29;
+}
+
+.logout-button {
+  width: 100vw; /* Full viewport width */
+  padding: 10px 0;
+  background-color: #4aee88;
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  text-align: center; /* Centers the text */
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #2b824c;
+}
