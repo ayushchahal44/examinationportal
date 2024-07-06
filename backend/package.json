@@ -12,7 +12,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-<<<<<<< HEAD
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
@@ -22,14 +21,6 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.3",
     "nodemailer": "^6.9.14",
-=======
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.4.3",
->>>>>>> c06fb41ce187a9fbaf9f544c828ac29b37acf51b
     "path": "^0.12.7"
   },
   "devDependencies": {
