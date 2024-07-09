@@ -9,8 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import Dashboard from './Teacher/Dashboard';
 import RegisterStudent from './Teacher/RegisterStudent';
 import CreateExam from './Teacher/CreateExam';
+import CreatePractical from './Teacher/CreatePractical';
 import Results from './Teacher/Results';
 import NotFound from './Teacher/NotFound';
+import ChangePassword from './Student/ChangePassword';
 
 const TeacherDashboard = () => {
   const navigate = useNavigate();
@@ -31,10 +33,12 @@ const TeacherDashboard = () => {
           <h1 className='teacher-dashboard'>Teacher Dashboard</h1>
         </div>
         <div className='teacher-dashboard-menu'>
-          <Link to="dashboard" className="menu-item">Dashboard</Link>
+          <Link to="home" className="menu-item">Dashboard</Link>
           <Link to="registerstudent" className="menu-item">Register Student</Link>
           <Link to="createexam" className="menu-item">Create Exam</Link>
+          <Link to="createpractical" className="menu-item">Create Practical</Link>
           <Link to="results" className="menu-item">Results</Link>
+          <Link to="change-password" className="menu-item">Change Password</Link>
         </div>
         <div className="button-container">
             <a href="/" onClick={handleLogout} className="logout-button">Logout</a>
@@ -42,11 +46,13 @@ const TeacherDashboard = () => {
       </div>
       <div className="right-container">
         <Routes>
-          <Route path="/" element={<Navigate to="dashboard" />} /> {/* Default Route */}
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="/" element={<Navigate to="home" />} /> {/* Default Route */}
+          <Route path="home" element={<Dashboard />} />
           <Route path="registerstudent" element={<RegisterStudent />} />
           <Route path="createexam" element={<CreateExam />} />
+          <Route path="createpractical" element={<CreatePractical />} />
           <Route path="results" element={<Results />} />
+          <Route path="change-password" element={<ChangePassword />} />
           <Route path="*" element={<NotFound />} /> {/* Fallback for unmatched routes */}
         </Routes>
       </div>

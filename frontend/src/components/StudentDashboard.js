@@ -31,7 +31,7 @@ const StudentDashboard = () => {
           <h1 className="student-dashboard">Student Dashboard</h1>
         </div>
         <div className="student-dashboard-menu">
-          <Link to="dashboard" className="menu-item">
+          <Link to="home" className="menu-item">
             Dashboard
           </Link>
           <Link to="exams" className="menu-item">
@@ -53,9 +53,9 @@ const StudentDashboard = () => {
       </div>
       <div className="right-container">
         <Routes>
-          <Route path="/" element={<Navigate to="dashboard" />} />{" "}
+          <Route path="/" element={<Navigate to="home" />} />{" "}
           {/* Default Route */}
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="home" element={<Dashboard />} />
           <Route path="exams" element={<Exams />} />
           <Route path="practical" element={<Practical />} />
           <Route path="results" element={<Results />} />

@@ -8,9 +8,9 @@ const Dashboard = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'row', gap: '20px', width: '77vw', height: '90vh', padding: '10px' }}>
       {/* Container for today's available tests */}
-      <div style={{ backgroundColor: '#00af91', padding: '20px', borderRadius: '8px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <h3 style={{ color: 'white', textAlign: 'center', borderBottom: '1px solid white', paddingBottom: '10px' }}>Today's Tests</h3>
-        <ul style={{ flex: 1, margin: 0, padding: 0, color: 'white' }}>
+      <div style={{ backgroundColor: '#ffffff', padding: '20px', borderRadius: '8px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <h3 style={{ color: 'black', textAlign: 'center', borderBottom: '1px solid black', paddingBottom: '10px' }}>Today's Tests</h3>
+        <ul style={{ flex: 1, margin: 0, padding: 0, color: 'black' }}>
           {todayTests.map((test, index) => (
             <li key={index} style={{ listStyleType: 'none', margin: '8px 0', textAlign: 'center' }}>{test}</li>
           ))}

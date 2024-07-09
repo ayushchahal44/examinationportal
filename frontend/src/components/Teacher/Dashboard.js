@@ -54,8 +54,8 @@ const Dashboard = () => {
   return (
     <div style={{ display: 'flex', gap: '20px', padding: '10px', height: '90vh' }}>
       {/* Container for upcoming exams */}
-      <div style={{ backgroundColor: '#00af91', padding: '20px', borderRadius: '8px', flex: 1, height: '90%', overflowY: 'auto' }}>
-        <h3 style={{ color: 'white', textAlign: 'center', borderBottom: '1px solid white', paddingBottom: '10px' }}>Upcoming Exams</h3>
+      <div style={{ backgroundColor: '#ececec', padding: '20px', borderRadius: '8px', flex: 1, height: '90%', overflowY: 'auto' }}>
+        <h3 style={{ color: 'black', textAlign: 'center', borderBottom: '1px solid black', paddingBottom: '10px' }}>Upcoming Exams</h3>
         <input
           type="text"
           placeholder="Search exams"
