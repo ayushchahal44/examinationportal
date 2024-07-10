@@ -20,13 +20,13 @@ const Login = () => {
       // Navigate based on selectedRole
       switch (selectedRole) {
         case 'Admin':
-          navigate('/admin-dashboard');
+          navigate('/admin');
           break;
         case 'Teacher':
-          navigate('/teacher-dashboard');
+          navigate('/teacher');
           break;
         case 'Student':
-          navigate('/student-dashboard');
+          navigate('/student');
           break;
         default:
           navigate('/'); // Default fallback
