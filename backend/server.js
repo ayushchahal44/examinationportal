@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs'); // Import bcryptjs for password hashing
 require('dotenv').config();
 
 const app = express();
@@ -41,17 +40,23 @@ const teacherSchema = new mongoose.Schema({
   password: String,
 });
 
+// Define a Mongoose schema for admins
+const adminSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  password: String,
+  isAdmin: Boolean,
+});
+
 // Create Mongoose models based on the schemas
 const Student = mongoose.model('Student', studentSchema);
 const Teacher = mongoose.model('Teacher', teacherSchema);
+const Admin = mongoose.model('Admin', adminSchema);
 
 // Route to handle student registration
 app.post('/api/register/student', async (req, res) => {
   try {
     const { name, email, mobileNumber, enrollYear, password } = req.body;
-
-    // Hash the password before saving it to MongoDB
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new instance of the Student model
     const newStudent = new Student({
@@ -59,7 +64,7 @@ app.post('/api/register/student', async (req, res) => {
       email,
       mobileNumber,
       enrollYear,
-      password: hashedPassword,
+      password,
     });
 
     // Save the new student instance to MongoDB
@@ -77,16 +82,13 @@ app.post('/api/register/teacher', async (req, res) => {
   try {
     const { name, email, mobileNumber, department, password } = req.body;
 
-    // Hash the password before saving it to MongoDB
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     // Create a new instance of the Teacher model
     const newTeacher = new Teacher({
       name,
       email,
       mobileNumber,
       department,
-      password: hashedPassword,
+      password,
     });
 
     // Save the new teacher instance to MongoDB
@@ -99,14 +101,33 @@ app.post('/api/register/teacher', async (req, res) => {
   }
 });
 
-// Dummy login route (replace with actual authentication logic)
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  // Validate username and password (dummy example)
-  if (username === 'admin' && password === 'admin') {
-    res.status(200).json({ message: 'Login successful' });
-  } else {
-    res.status(401).json({ message: 'Login failed' });
+// Define the login route
+app.post('/login', async (req, res) => {
+  const { username, password, role } = req.body;
+
+  try {
+    let user;
+    if (role === 'Admin') {
+      user = await Admin.findOne({ email: username });
+      if (user && user.password === password) {
+        return res.status(200).json({ message: 'Login successful' });
+      } else {
+        return res.status(401).json({ message: 'Login failed' });
+      }
+    } else if (role === 'Teacher') {
+      user = await Teacher.findOne({ email: username });
+    } else if (role === 'Student') {
+      user = await Student.findOne({ email: username });
+    }
+
+    if (user && password === user.password) {
+      return res.status(200).json({ message: 'Login successful' });
+    } else {
+      return res.status(401).json({ message: 'Login failed' });
+    }
+  } catch (error) {
+    console.error('Error during login:', error);
+    return res.status(500).json({ error: 'An error occurred during login' });
   }
 });
 

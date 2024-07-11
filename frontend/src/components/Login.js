@@ -14,8 +14,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // eslint-disable-next-line no-unused-vars
-      const res = await axios.post('http://localhost:5000/login', { username, password });
+      const res = await axios.post('http://localhost:5000/login', { username, password, role: selectedRole });
       setMessage('Login successful');
       // Navigate based on selectedRole
       switch (selectedRole) {
@@ -73,7 +72,7 @@ const Login = () => {
             />
           </div>
           <button type="submit">Login</button>
-         <p><a href='#'>Forgot your password?</a></p>
+          <p><a href='#'>Forgot your password?</a></p>
         </form>
         {message && <p className="message">{message}</p>}
       </div>
