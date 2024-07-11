@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
+    email: '', // Add email state if needed
     currentPassword: '',
     newPassword: '',
     confirmNewPassword: ''
@@ -24,6 +25,7 @@ const ChangePassword = () => {
     try {
       // Your Axios POST request to change the password
       const response = await axios.post('http://localhost:5000/api/change-password', {
+        email: formData.email,
         currentPassword: formData.currentPassword,
         newPassword: formData.newPassword
       });

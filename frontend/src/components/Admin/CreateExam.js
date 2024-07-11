@@ -21,13 +21,13 @@ const CreateExam = () => {
       numQuestions: examType === 'mix' ? undefined : parseInt(numQuestions, 10),
       numMcqs: examType === 'mix' ? parseInt(numMcqs, 10) : undefined,
       numTheory: examType === 'mix' ? parseInt(numTheory, 10) : undefined,
+      questions: [] // You can add logic to input questions if needed
     };
 
     try {
       const response = await axios.post(`${apiUrl}/api/createExam`, payload);
       console.log('Exam created successfully:', response.data);
       alert('Exam created successfully');
-      // Reset form fields after successful submission
       setExamType('mcq');
       setSubjectName('');
       setNumQuestions('');

@@ -22,7 +22,7 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
-// Define a Mongoose schema for students
+// Define Mongoose schemas and models
 const studentSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -31,7 +31,6 @@ const studentSchema = new mongoose.Schema({
   password: String,
 });
 
-// Define a Mongoose schema for teachers
 const teacherSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -40,7 +39,6 @@ const teacherSchema = new mongoose.Schema({
   password: String,
 });
 
-// Define a Mongoose schema for admins
 const adminSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -48,28 +46,32 @@ const adminSchema = new mongoose.Schema({
   isAdmin: Boolean,
 });
 
-// Create Mongoose models based on the schemas
+const examSchema = new mongoose.Schema({
+  examType: { type: String, required: true },
+  subjectName: { type: String, required: true },
+  numQuestions: { type: Number },
+  numMcqs: { type: Number },
+  numTheory: { type: Number },
+  questions: [{
+    questionText: String,
+    questionType: String,
+    options: [String],
+    correctAnswer: String,
+  }],
+  createdAt: { type: Date, default: Date.now },
+});
+
 const Student = mongoose.model('Student', studentSchema);
 const Teacher = mongoose.model('Teacher', teacherSchema);
 const Admin = mongoose.model('Admin', adminSchema);
+const Exam = mongoose.model('Exam', examSchema);
 
 // Route to handle student registration
 app.post('/api/register/student', async (req, res) => {
   try {
     const { name, email, mobileNumber, enrollYear, password } = req.body;
-
-    // Create a new instance of the Student model
-    const newStudent = new Student({
-      name,
-      email,
-      mobileNumber,
-      enrollYear,
-      password,
-    });
-
-    // Save the new student instance to MongoDB
+    const newStudent = new Student({ name, email, mobileNumber, enrollYear, password });
     const savedStudent = await newStudent.save();
-
     res.status(201).json(savedStudent);
   } catch (error) {
     console.error('Error registering student:', error);
@@ -81,19 +83,8 @@ app.post('/api/register/student', async (req, res) => {
 app.post('/api/register/teacher', async (req, res) => {
   try {
     const { name, email, mobileNumber, department, password } = req.body;
-
-    // Create a new instance of the Teacher model
-    const newTeacher = new Teacher({
-      name,
-      email,
-      mobileNumber,
-      department,
-      password,
-    });
-
-    // Save the new teacher instance to MongoDB
+    const newTeacher = new Teacher({ name, email, mobileNumber, department, password });
     const savedTeacher = await newTeacher.save();
-
     res.status(201).json(savedTeacher);
   } catch (error) {
     console.error('Error registering teacher:', error);
@@ -101,10 +92,33 @@ app.post('/api/register/teacher', async (req, res) => {
   }
 });
 
+// Route to handle exam creation
+app.post('/api/createExam', async (req, res) => {
+  try {
+    const { examType, subjectName, numQuestions, numMcqs, numTheory, questions } = req.body;
+    const newExam = new Exam({ examType, subjectName, numQuestions, numMcqs, numTheory, questions });
+    const savedExam = await newExam.save();
+    res.status(201).json(savedExam);
+  } catch (error) {
+    console.error('Error creating exam:', error);
+    res.status(500).json({ error: 'Failed to create exam' });
+  }
+});
+
+// Route to get all exams
+app.get('/api/exams', async (req, res) => {
+  try {
+    const exams = await Exam.find();
+    res.status(200).json(exams);
+  } catch (error) {
+    console.error('Error fetching exams:', error);
+    res.status(500).json({ error: 'Failed to fetch exams' });
+  }
+});
+
 // Define the login route
 app.post('/login', async (req, res) => {
   const { username, password, role } = req.body;
-
   try {
     let user;
     if (role === 'Admin') {
@@ -119,7 +133,6 @@ app.post('/login', async (req, res) => {
     } else if (role === 'Student') {
       user = await Student.findOne({ email: username });
     }
-
     if (user && password === user.password) {
       return res.status(200).json({ message: 'Login successful' });
     } else {
