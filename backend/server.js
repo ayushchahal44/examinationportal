@@ -95,8 +95,8 @@ app.post('/api/register/teacher', async (req, res) => {
 // Route to handle exam creation
 app.post('/api/createExam', async (req, res) => {
   try {
-    const { examType, subjectName, numQuestions, numMcqs, numTheory, questions } = req.body;
-    const newExam = new Exam({ examType, subjectName, numQuestions, numMcqs, numTheory, questions });
+    const { examType, subjectName, numQuestions, questions } = req.body;
+    const newExam = new Exam({ examType, subjectName, numQuestions, questions });
     const savedExam = await newExam.save();
     res.status(201).json(savedExam);
   } catch (error) {
