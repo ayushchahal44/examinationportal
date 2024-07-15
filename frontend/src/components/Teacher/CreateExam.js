@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './CreateExam.css'; // Assuming you have a separate CSS file for styling
+import DatePicker from 'react-datepicker'; // Import date picker component
+import 'react-datepicker/dist/react-datepicker.css';
 
 const CreateExam = () => {
   const [examType, setExamType] = useState('mcq');
@@ -9,6 +11,9 @@ const CreateExam = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState({ questionText: '', options: ['', '', '', ''], correctAnswer: '' });
   const [isLoading, setIsLoading] = useState(false);
+  const [startTime, setStartTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(new Date());
+  const [examDate, setExamDate] = useState(new Date()); // State for exam date
 
   const apiUrl = "http://localhost:5000";
 
@@ -20,7 +25,10 @@ const CreateExam = () => {
       examType,
       subjectName,
       numQuestions: questions.length,
-      questions
+      questions,
+      startTime,
+      endTime,
+      examDate // Include examDate in payload
     };
 
     try {
@@ -88,6 +96,45 @@ const CreateExam = () => {
                 onChange={(e) => setSubjectName(e.target.value)}
                 required
                 style={{ marginLeft: '10px', padding: '5px' }}
+              />
+            </label>
+          </div>
+          <div style={{ marginTop: '10px' }}>
+            <label>
+              Exam Date:
+              <DatePicker
+                selected={examDate}
+                onChange={date => setExamDate(date)}
+                dateFormat="MMMM d, yyyy"
+                className="date-picker"
+              />
+            </label>
+          </div>
+          <div style={{ marginTop: '10px' }}>
+            <label>
+              Start Time:
+              <DatePicker
+                selected={startTime}
+                onChange={date => setStartTime(date)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="h:mm aa"
+                className="date-picker"
+              />
+            </label>
+          </div>
+          <div style={{ marginTop: '10px' }}>
+            <label>
+              End Time:
+              <DatePicker
+                selected={endTime}
+                onChange={date => setEndTime(date)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="h:mm aa"
+                className="date-picker"
               />
             </label>
           </div>

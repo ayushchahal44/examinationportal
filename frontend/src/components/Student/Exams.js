@@ -1,53 +1,55 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import moment from 'moment'; // Import moment for date formatting
 
 const Exams = () => {
-  const navigate = useNavigate(); // Initialize useNavigate hook
-
-  // Sample data for available exams (with start and end times)
-  const [exams, setExams] = useState([
-    { id: 1, name: 'Exam 1', selected: false, startTime: '10:00 AM', endTime: '11:00 AM' },
-    { id: 2, name: 'Exam 2', selected: false, startTime: '11:30 AM', endTime: '12:30 PM' },
-    { id: 3, name: 'Exam 3', selected: false, startTime: '1:00 PM', endTime: '2:00 PM' },
-    { id: 4, name: 'Exam 4', selected: false, startTime: '2:30 PM', endTime: '3:30 PM' },
-    { id: 5, name: 'Exam 5', selected: false, startTime: '4:00 PM', endTime: '5:00 PM' },
-    { id: 6, name: 'Exam 6', selected: false, startTime: '5:30 PM', endTime: '6:30 PM' },
-    { id: 7, name: 'Exam 7', selected: false, startTime: '7:00 PM', endTime: '8:00 PM' },
-    { id: 8, name: 'Exam 8', selected: false, startTime: '8:30 PM', endTime: '9:30 PM' },
-    { id: 9, name: 'Exam 9', selected: false, startTime: '10:00 AM', endTime: '12:00 PM' },
-    { id: 10, name: 'Exam 10', selected: false, startTime: '1:00 PM', endTime: '3:00 PM' },
-  ]);
-
+  const navigate = useNavigate();
+  const [exams, setExams] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Function to handle exam selection
+  useEffect(() => {
+    const fetchExams = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/exams');
+        const formattedExams = response.data.map(exam => ({
+          ...exam,
+          formattedStartTime: moment(exam.startTime).format('MMMM D, YYYY h:mm A'),
+          formattedEndTime: moment(exam.endTime).format('h:mm A')
+        }));
+        setExams(formattedExams);
+      } catch (error) {
+        console.error('Error fetching exams:', error);
+      }
+    };
+
+    fetchExams();
+  }, []);
+
   const handleExamSelection = (id) => {
     setExams(prevExams =>
       prevExams.map(exam =>
-        exam.id === id ? { ...exam, selected: true } : { ...exam, selected: false }
+        exam._id === id ? { ...exam, selected: true } : { ...exam, selected: false }
       )
     );
   };
 
-  // Function to handle start button click
   const handleStart = () => {
     const selectedExam = exams.find(exam => exam.selected);
     if (selectedExam) {
-      // Navigate to another page (replace '/exam' with your actual path)
-      navigate(`/exam/${selectedExam.id}`);
+      navigate(`/take-exam/${selectedExam._id}`);
     } else {
       alert('Please select an exam to start.');
     }
   };
 
-  // Filter exams based on search term
   const filteredExams = exams.filter(exam =>
-    exam.name.toLowerCase().includes(searchTerm.toLowerCase())
+    exam.subjectName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh',marginTop: '5px'}}>
-      <div style={{ width: '80%', textAlign: 'center', backgroundColor: '#ffffff', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)',marginTop: '5px' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+      <div style={{ width: '80%', textAlign: 'center', backgroundColor: '#ffffff', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
         <h2>Available Exams</h2>
         <input
           type="text"
@@ -66,21 +68,26 @@ const Exams = () => {
           <ul style={{ listStyleType: 'none', padding: 0 }}>
             {filteredExams.map(exam => (
               <li
-                key={exam.id}
+                key={exam._id}
                 style={{
                   margin: '10px 0',
                   border: '1px solid #ccc',
                   borderRadius: '4px',
                   padding: '10px',
                   cursor: 'pointer',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   backgroundColor: exam.selected ? '#28a745' : 'inherit',
                   color: exam.selected ? 'white' : 'inherit'
                 }}
-                onClick={() => handleExamSelection(exam.id)}
+                onClick={() => handleExamSelection(exam._id)}
               >
-                <div>{exam.name}</div>
-                <div style={{ fontSize: '12px', color: '#666' }}>
-                  {`Start Time: ${exam.startTime} - End Time: ${exam.endTime}`}
+                <div style={{ flexGrow: 1 }}>
+                  <div>{exam.subjectName} ({exam.examType})</div>
+                  <div style={{ fontSize: '12px', color: '#666' }}>
+                    {exam.formattedStartTime} - {exam.formattedEndTime}
+                  </div>
                 </div>
               </li>
             ))}

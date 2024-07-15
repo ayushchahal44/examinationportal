@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './CreatePractical.css'; // Assuming you have a separate CSS file for styling
+import DatePicker from 'react-datepicker'; // Import date picker component
+import 'react-datepicker/dist/react-datepicker.css';
 
 const CreatePractical = () => {
   const [subjectName, setSubjectName] = useState('');
-  const [numTasks, setNumTasks] = useState('');
   const [tasks, setTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTask, setCurrentTask] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
+  const [startTime, setStartTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(new Date());
+  const [examDate, setExamDate] = useState(new Date()); // State for exam date
 
   const apiUrl = "http://localhost:5000";
 
@@ -19,8 +23,11 @@ const CreatePractical = () => {
 
     const payload = {
       subjectName,
-      numTasks: parseInt(numTasks, 10),
-      tasks
+      numTasks: tasks.length, // Calculate the number of tasks dynamically
+      tasks,
+      startTime,
+      endTime,
+      examDate // Include examDate in payload
     };
 
     try {
@@ -29,7 +36,6 @@ const CreatePractical = () => {
       alert('Practical created successfully');
       // Reset form fields after successful submission
       setSubjectName('');
-      setNumTasks('');
       setTasks([]);
     } catch (error) {
       console.error('Error creating practical:', error);
@@ -77,13 +83,40 @@ const CreatePractical = () => {
           </div>
           <div style={{ marginTop: '10px' }}>
             <label>
-              Number of Tasks:
-              <input
-                type="number"
-                value={numTasks}
-                onChange={(e) => setNumTasks(e.target.value)}
-                required
-                style={{ marginLeft: '10px', padding: '5px' }}
+              Exam Date:
+              <DatePicker
+                selected={examDate}
+                onChange={date => setExamDate(date)}
+                dateFormat="MMMM d, yyyy"
+                className="date-picker"
+              />
+            </label>
+          </div>
+          <div style={{ marginTop: '10px' }}>
+            <label>
+              Start Time:
+              <DatePicker
+                selected={startTime}
+                onChange={date => setStartTime(date)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="h:mm aa"
+                className="date-picker"
+              />
+            </label>
+          </div>
+          <div style={{ marginTop: '10px' }}>
+            <label>
+              End Time:
+              <DatePicker
+                selected={endTime}
+                onChange={date => setEndTime(date)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="h:mm aa"
+                className="date-picker"
               />
             </label>
           </div>

@@ -1,43 +1,45 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import moment from 'moment'; // Import moment for date formatting
 
 const Practical = () => {
-  const navigate = useNavigate(); // Initialize useNavigate hook
-
-  // Sample data for available practicals (with start and end times)
-  const [practicals, setPracticals] = useState([
-    { id: 1, name: 'Practical 1', selected: false, startTime: '10:00 AM', endTime: '11:00 AM' },
-    { id: 2, name: 'Practical 2', selected: false, startTime: '11:30 AM', endTime: '12:30 PM' },
-    { id: 3, name: 'Practical 3', selected: false, startTime: '1:00 PM', endTime: '2:00 PM' },
-    { id: 4, name: 'Practical 4', selected: false, startTime: '2:30 PM', endTime: '3:30 PM' },
-    { id: 5, name: 'Practical 5', selected: false, startTime: '4:00 PM', endTime: '5:00 PM' },
-  ]);
-
+  const navigate = useNavigate();
+  const [practicals, setPracticals] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Function to handle practical selection
+  useEffect(() => {
+    const fetchPracticals = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/practicals');
+        setPracticals(response.data);
+      } catch (error) {
+        console.error('Error fetching practicals:', error);
+      }
+    };
+
+    fetchPracticals();
+  }, []);
+
   const handlePracticalSelection = (id) => {
     setPracticals(prevPracticals =>
       prevPracticals.map(practical =>
-        practical.id === id ? { ...practical, selected: true } : { ...practical, selected: false }
+        practical._id === id ? { ...practical, selected: true } : { ...practical, selected: false }
       )
     );
   };
 
-  // Function to handle start button click
   const handleStart = () => {
     const selectedPractical = practicals.find(practical => practical.selected);
     if (selectedPractical) {
-      // Navigate to another page (replace '/practical' with your actual path)
-      navigate(`/practical/${selectedPractical.id}`);
+      navigate(`/practical/${selectedPractical._id}`);
     } else {
       alert('Please select a practical to start.');
     }
   };
 
-  // Filter practicals based on search term
   const filteredPracticals = practicals.filter(practical =>
-    practical.name.toLowerCase().includes(searchTerm.toLowerCase())
+    practical.subjectName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -61,21 +63,25 @@ const Practical = () => {
           <ul style={{ listStyleType: 'none', padding: 0 }}>
             {filteredPracticals.map(practical => (
               <li
-                key={practical.id}
+                key={practical._id}
                 style={{
                   margin: '10px 0',
                   border: '1px solid #ccc',
                   borderRadius: '4px',
                   padding: '10px',
                   cursor: 'pointer',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   backgroundColor: practical.selected ? '#28a745' : 'inherit',
                   color: practical.selected ? 'white' : 'inherit'
                 }}
-                onClick={() => handlePracticalSelection(practical.id)}
+                onClick={() => handlePracticalSelection(practical._id)}
               >
-                <div>{practical.name}</div>
+                <div>{practical.subjectName}</div>
                 <div style={{ fontSize: '12px', color: '#666' }}>
-                  {`Start Time: ${practical.startTime} - End Time: ${practical.endTime}`}
+                  {moment(practical.startTime).format('MMMM D, YYYY')}<br />
+                  {moment(practical.startTime).format('h:mm A')} - {moment(practical.endTime).format('h:mm A')}
                 </div>
               </li>
             ))}
