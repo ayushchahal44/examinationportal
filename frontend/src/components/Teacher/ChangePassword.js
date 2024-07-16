@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
-    email: '', // Add email state if needed
     currentPassword: '',
     newPassword: '',
     confirmNewPassword: ''
@@ -22,18 +21,30 @@ const ChangePassword = () => {
       alert('New password and confirm password do not match');
       return;
     }
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('You must be logged in to change your password');
+      return;
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+
     try {
-      // Your Axios POST request to change the password
       const response = await axios.post('http://localhost:5000/api/change-password', {
-        email: formData.email,
         currentPassword: formData.currentPassword,
         newPassword: formData.newPassword
-      });
-      console.log('Password changed successfully!', response.data);
-      // Optionally handle success feedback or navigation
+      }, config);
+
+      alert(response.data.message);
     } catch (error) {
-      console.error('Error changing password:', error);
-      // Optionally handle error feedback
+      console.error('Error changing password:', error.response.data);
+      alert(error.response.data.message || 'Failed to change password');
     }
   };
 
@@ -55,8 +66,6 @@ const ChangePassword = () => {
         </div>
         <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px' }}>Change Password</button>
       </form>
-      {/* Optional feedback message */}
-      {/* <p style={{ marginTop: '10px', fontSize: '14px', color: '#333', textAlign: 'center' }}>Password changed successfully!</p> */}
     </div>
   );
 };

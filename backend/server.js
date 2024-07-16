@@ -210,6 +210,40 @@ app.post('/api/exams/:examId/submit', verifyToken, async (req, res) => {
   }
 });
 
+
+// Route to handle password change
+app.post('/api/change-password', verifyToken, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userEmail = req.user.email;
+
+    // Find the user based on the email fetched from decoded JWT
+    const user = await Student.findOne({ email: userEmail });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Verify if the current password matches
+    if (user.password !== currentPassword) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    // Update the user's password
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ message: 'Failed to change password' });
+  }
+});
+
+
+
+
+
 // Define the login route
 app.post('/api/login', async (req, res) => {
   const { username, password, role } = req.body;
