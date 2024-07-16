@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
+// Login.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -14,9 +14,9 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/login', { username, password, role: selectedRole });
+      const res = await axios.post('http://localhost:5000/api/login', { username, password, role: selectedRole });
+      localStorage.setItem('token', res.data.token);
       setMessage('Login successful');
-      // Navigate based on selectedRole
       switch (selectedRole) {
         case 'Admin':
           navigate('/admin');

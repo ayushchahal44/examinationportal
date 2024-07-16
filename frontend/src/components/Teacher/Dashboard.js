@@ -1,35 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Dashboard = () => {
-  // Sample data
-  const [upcomingExams, setUpcomingExams] = useState([
-    { id: 1, name: 'Math Exam', dateTime: '2024-07-15 10:00 AM' },
-    { id: 2, name: 'Science Exam', dateTime: '2024-07-16 11:30 AM' },
-    { id: 3, name: 'History Exam', dateTime: '2024-07-17 1:00 PM' },
-    { id: 4, name: 'English Exam', dateTime: '2024-07-18 2:30 PM' },
-    { id: 5, name: 'Physics Exam', dateTime: '2024-07-19 4:00 PM' },
-    { id: 6, name: 'Chemistry Exam', dateTime: '2024-07-20 5:30 PM' },
-    { id: 7, name: 'Biology Exam', dateTime: '2024-07-21 7:00 PM' },
-    { id: 8, name: 'Geography Exam', dateTime: '2024-07-22 8:30 PM' },
-    { id: 9, name: 'Computer Science Exam', dateTime: '2024-07-23 10:00 AM' },
-    { id: 10, name: 'Economics Exam', dateTime: '2024-07-24 1:00 PM' },
-  ]);
-
-  const [upcomingPracticals, setUpcomingPracticals] = useState([
-    { id: 1, name: 'Math Practical', dateTime: '2024-07-15 10:00 AM' },
-    { id: 2, name: 'Science Practical', dateTime: '2024-07-16 11:30 AM' },
-    { id: 3, name: 'History Practical', dateTime: '2024-07-17 1:00 PM' },
-    { id: 4, name: 'English Practical', dateTime: '2024-07-18 2:30 PM' },
-    { id: 5, name: 'Physics Practical', dateTime: '2024-07-19 4:00 PM' },
-    { id: 6, name: 'Chemistry Practical', dateTime: '2024-07-20 5:30 PM' },
-    { id: 7, name: 'Biology Practical', dateTime: '2024-07-21 7:00 PM' },
-    { id: 8, name: 'Geography Practical', dateTime: '2024-07-22 8:30 PM' },
-    { id: 9, name: 'Computer Science Practical', dateTime: '2024-07-23 10:00 AM' },
-    { id: 10, name: 'Economics Practical', dateTime: '2024-07-24 1:00 PM' },
-  ]);
-
+  const [upcomingExams, setUpcomingExams] = useState([]);
+  const [upcomingPracticals, setUpcomingPracticals] = useState([]);
   const [examSearchTerm, setExamSearchTerm] = useState('');
   const [practicalSearchTerm, setPracticalSearchTerm] = useState('');
+
+  useEffect(() => {
+    // Fetch exams from backend
+    axios.get('/api/exams')
+      .then(response => {
+        setUpcomingExams(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching exams:', error);
+      });
+
+    // Fetch practicals from backend
+    axios.get('/api/practicals')
+      .then(response => {
+        setUpcomingPracticals(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching practicals:', error);
+      });
+  }, []); // Empty dependency array to run only once on component mount
 
   // Function to handle exam search
   const handleExamSearch = (e) => {
@@ -75,7 +71,7 @@ const Dashboard = () => {
         <ul style={{ listStyleType: 'none', padding: 0 }}>
           {filteredExams.map((exam) => (
             <li
-              key={exam.id}
+              key={exam._id}
               style={{
                 margin: '10px 0',
                 border: '1px solid #ccc',
@@ -87,7 +83,7 @@ const Dashboard = () => {
               }}
             >
               <div style={{ fontSize: '18px', fontWeight: 'bold' }}>{exam.name}</div>
-              <div style={{ fontSize: '14px', color: '#666666' }}>{exam.dateTime}</div>
+              <div style={{ fontSize: '14px', color: '#666666' }}>{new Date(exam.dateTime).toLocaleString()}</div>
               <div style={{ textAlign: 'right', marginTop: '10px' }}>
                 <button
                   style={{
@@ -129,7 +125,7 @@ const Dashboard = () => {
         <ul style={{ listStyleType: 'none', padding: 0 }}>
           {filteredPracticals.map((practical) => (
             <li
-              key={practical.id}
+              key={practical._id}
               style={{
                 margin: '10px 0',
                 border: '1px solid #ccc',
@@ -141,7 +137,7 @@ const Dashboard = () => {
               }}
             >
               <div style={{ fontSize: '18px', fontWeight: 'bold' }}>{practical.name}</div>
-              <div style={{ fontSize: '14px', color: '#666666' }}>{practical.dateTime}</div>
+              <div style={{ fontSize: '14px', color: '#666666' }}>{new Date(practical.dateTime).toLocaleString()}</div>
               <div style={{ textAlign: 'right', marginTop: '10px' }}>
                 <button
                   style={{

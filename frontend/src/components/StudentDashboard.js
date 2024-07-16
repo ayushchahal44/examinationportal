@@ -1,15 +1,14 @@
-// StudentDashboard.js
 import React from "react";
 import { Routes, Route, Link, Navigate, useNavigate } from "react-router-dom";
 import "./StudentDashboard.css";
 
-// Import your page components from the Admin folder
+// Import your page components from the Student folder
 import Dashboard from "./Student/Dashboard";
 import Practical from "./Student/Practical";
 import Exams from "./Student/Exams";
 import Results from "./Student/Results";
-import NotFound from "./Student/NotFound";
 import ChangePassword from "./Student/ChangePassword";
+import NotFound from "./Student/NotFound";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -48,8 +47,10 @@ const StudentDashboard = () => {
           </Link>
         </div>
         <div className="button-container">
-            <a href="/" onClick={handleLogout} className="logout-button">Logout</a>
-          </div>
+          <a href="/" onClick={handleLogout} className="logout-button">
+            Logout
+          </a>
+        </div>
       </div>
       <div className="right-container">
         <Routes>

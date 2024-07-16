@@ -1,19 +1,32 @@
-// App.js (or index.js)
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import BrowserRouter, Routes, and Route
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import AdminDashboard from './components/AdminDashboard';
 import TeacherDashboard from './components/TeacherDashboard';
 import StudentDashboard from './components/StudentDashboard';
 
 const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token'); // Check for token in localStorage
+
+    // Validate the token with your authentication mechanism
+    // For simplicity, assume checking the presence of token is sufficient
+    if (token) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []); // Empty dependency array ensures this effect runs only once on component mount
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/admin/*" element={<AdminDashboard />} />
-        <Route path="/teacher/*" element={<TeacherDashboard />} />
-        <Route path="/student/*" element={<StudentDashboard />} />
+        <Route path="/" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+        <Route path="/admin/*" element={isLoggedIn ? <AdminDashboard /> : <Navigate to="/" />} />
+        <Route path="/teacher/*" element={isLoggedIn ? <TeacherDashboard /> : <Navigate to="/" />} />
+        <Route path="/student/*" element={isLoggedIn ? <StudentDashboard /> : <Navigate to="/" />} />
       </Routes>
     </Router>
   );

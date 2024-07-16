@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const app = express();
@@ -66,8 +67,8 @@ const examSchema = new mongoose.Schema({
 const practicalSchema = new mongoose.Schema({
   subjectName: String,
   numTasks: Number,
-  startTime: { type: Date, required: true }, // Added startTime
-  endTime: { type: Date, required: true },   // Added endTime
+  startTime: { type: Date, required: true },
+  endTime: { type: Date, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
@@ -76,6 +77,33 @@ const Teacher = mongoose.model('Teacher', teacherSchema);
 const Admin = mongoose.model('Admin', adminSchema);
 const Exam = mongoose.model('Exam', examSchema);
 const Practical = mongoose.model('Practical', practicalSchema);
+
+// JWT Configuration
+const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
+
+const generateToken = (user) => {
+  return jwt.sign({ id: user._id, email: user.email, role: user.isAdmin ? 'Admin' : 'User' }, JWT_SECRET, {
+    expiresIn: '1h', // Token expiry time
+  });
+};
+
+const verifyToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: 'Invalid token' });
+      }
+      req.user = decoded;
+      next();
+    });
+  } else {
+    res.status(401).json({ message: 'Unauthorized' });
+  }
+};
+
+// Routes
 
 // Route to handle student registration
 app.post('/api/register/student', async (req, res) => {
@@ -104,7 +132,7 @@ app.post('/api/register/teacher', async (req, res) => {
 });
 
 // Route to handle exam creation
-app.post('/api/createExam', async (req, res) => {
+app.post('/api/exams', verifyToken, async (req, res) => {
   try {
     const { examType, subjectName, numQuestions, numMcqs, numTheory, questions, startTime, endTime } = req.body;
     const newExam = new Exam({ examType, subjectName, numQuestions, numMcqs, numTheory, questions, startTime, endTime });
@@ -117,10 +145,10 @@ app.post('/api/createExam', async (req, res) => {
 });
 
 // Route to handle practical creation
-app.post('/api/createPractical', async (req, res) => {
+app.post('/api/practicals', verifyToken, async (req, res) => {
   try {
-    const { subjectName, numTasks, startTime, endTime } = req.body; // Include startTime and endTime in request body
-    const newPractical = new Practical({ subjectName, numTasks, startTime, endTime }); // Pass startTime and endTime to Practical model
+    const { subjectName, numTasks, startTime, endTime } = req.body;
+    const newPractical = new Practical({ subjectName, numTasks, startTime, endTime });
     const savedPractical = await newPractical.save();
     res.status(201).json(savedPractical);
   } catch (error) {
@@ -130,7 +158,7 @@ app.post('/api/createPractical', async (req, res) => {
 });
 
 // Route to get all practicals
-app.get('/api/practicals', async (req, res) => {
+app.get('/api/practicals', verifyToken, async (req, res) => {
   try {
     const practicals = await Practical.find();
     res.status(200).json(practicals);
@@ -140,8 +168,8 @@ app.get('/api/practicals', async (req, res) => {
   }
 });
 
-// Route to get all exams (for students to view)
-app.get('/api/exams', async (req, res) => {
+// Route to get all exams
+app.get('/api/exams', verifyToken, async (req, res) => {
   try {
     const exams = await Exam.find();
     res.status(200).json(exams);
@@ -152,7 +180,7 @@ app.get('/api/exams', async (req, res) => {
 });
 
 // Route to get an exam by ID
-app.get('/api/exams/:examId', async (req, res) => {
+app.get('/api/exams/:examId', verifyToken, async (req, res) => {
   try {
     const { examId } = req.params;
     const exam = await Exam.findById(examId);
@@ -166,31 +194,44 @@ app.get('/api/exams/:examId', async (req, res) => {
   }
 });
 
+// Route to submit exam answers
+app.post('/api/exams/:examId/submit', verifyToken, async (req, res) => {
+  try {
+    const { examId } = req.params;
+    const { answers } = req.body;
+
+    // Implement your logic here to save answers to the exam document or another collection
+    // Example: await Exam.findByIdAndUpdate(examId, { $push: { submissions: { studentId: req.user.id, answers } } });
+
+    res.status(200).json({ message: 'Exam submitted successfully' });
+  } catch (error) {
+    console.error('Error submitting exam:', error);
+    res.status(500).json({ error: 'Failed to submit exam' });
+  }
+});
+
 // Define the login route
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
   const { username, password, role } = req.body;
   try {
     let user;
     if (role === 'Admin') {
       user = await Admin.findOne({ email: username });
-      if (user && user.password === password) {
-        return res.status(200).json({ message: 'Login successful' });
-      } else {
-        return res.status(401).json({ message: 'Login failed' });
-      }
     } else if (role === 'Teacher') {
       user = await Teacher.findOne({ email: username });
     } else if (role === 'Student') {
       user = await Student.findOne({ email: username });
     }
-    if (user && password === user.password) {
-      return res.status(200).json({ message: 'Login successful' });
-    } else {
+
+    if (!user || user.password !== password) {
       return res.status(401).json({ message: 'Login failed' });
     }
+
+    const token = generateToken(user);
+    res.status(200).json({ token });
   } catch (error) {
     console.error('Error during login:', error);
-    return res.status(500).json({ error: 'An error occurred during login' });
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 

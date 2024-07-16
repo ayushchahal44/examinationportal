@@ -1,7 +1,8 @@
+// Exams.js (within StudentDashboard/Exams)
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import moment from 'moment'; // Import moment for date formatting
+import moment from 'moment';
 
 const Exams = () => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const Exams = () => {
   const handleStart = () => {
     const selectedExam = exams.find(exam => exam.selected);
     if (selectedExam) {
-      navigate(`/take-exam/${selectedExam._id}`);
+      navigate(`/student/take-exam/${selectedExam._id}`); // Navigate to TakeExam page with exam ID
     } else {
       alert('Please select an exam to start.');
     }
