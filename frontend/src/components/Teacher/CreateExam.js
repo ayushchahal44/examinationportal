@@ -31,8 +31,22 @@ const CreateExam = () => {
       examDate // Include examDate in payload
     };
 
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('You must be logged in to create exam');
+      return;
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+
     try {
-      const response = await axios.post(`${apiUrl}/api/createExam`, payload);
+      const response = await axios.post(`${apiUrl}/api/createExam`, payload,config);
       console.log('Exam created successfully:', response.data);
       alert('Exam created successfully');
       setExamType('mcq');

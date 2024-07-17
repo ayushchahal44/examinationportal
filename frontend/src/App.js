@@ -4,6 +4,7 @@ import Login from './components/Login';
 import AdminDashboard from './components/AdminDashboard';
 import TeacherDashboard from './components/TeacherDashboard';
 import StudentDashboard from './components/StudentDashboard';
+import TakeExam from './components/Student/TakeExam';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -20,13 +21,16 @@ const App = () => {
     }
   }, []); // Empty dependency array ensures this effect runs only once on component mount
 
+
+  
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+        <Route path="/" exact element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/admin/*" element={isLoggedIn ? <AdminDashboard /> : <Navigate to="/" />} />
         <Route path="/teacher/*" element={isLoggedIn ? <TeacherDashboard /> : <Navigate to="/" />} />
         <Route path="/student/*" element={isLoggedIn ? <StudentDashboard /> : <Navigate to="/" />} />
+        <Route path="/student/exams/take-exam/:id" element={<TakeExam/>} />
       </Routes>
     </Router>
   );

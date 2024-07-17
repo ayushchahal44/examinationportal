@@ -30,8 +30,21 @@ const CreatePractical = () => {
       examDate // Include examDate in payload
     };
 
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('You must be logged in to create practical');
+      return;
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+
     try {
-      const response = await axios.post(`${apiUrl}/api/createPractical`, payload);
+      const response = await axios.post(`${apiUrl}/api/createPractical`, payload,config);
       console.log('Practical created successfully:', response.data);
       alert('Practical created successfully');
       // Reset form fields after successful submission

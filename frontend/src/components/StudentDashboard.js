@@ -22,6 +22,7 @@ const StudentDashboard = () => {
 
   return (
     <div className="student-dashboard-container">
+
       <div className="left-container">
         <div className="profile-picture-container">
           <div className="profile-picture">

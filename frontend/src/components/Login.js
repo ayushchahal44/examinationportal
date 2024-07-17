@@ -1,4 +1,3 @@
-// Login.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +14,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:5000/api/login', { username, password, role: selectedRole });
-      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('token', res.data.token); // Store token in localStorage
       setMessage('Login successful');
       switch (selectedRole) {
         case 'Admin':

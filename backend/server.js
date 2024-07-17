@@ -132,7 +132,7 @@ app.post('/api/register/teacher', async (req, res) => {
 });
 
 // Route to handle exam creation
-app.post('/api/exams', verifyToken, async (req, res) => {
+app.post('/api/createExam',verifyToken, async (req, res) => {
   try {
     const { examType, subjectName, numQuestions, numMcqs, numTheory, questions, startTime, endTime } = req.body;
     const newExam = new Exam({ examType, subjectName, numQuestions, numMcqs, numTheory, questions, startTime, endTime });
@@ -145,7 +145,7 @@ app.post('/api/exams', verifyToken, async (req, res) => {
 });
 
 // Route to handle practical creation
-app.post('/api/practicals', verifyToken, async (req, res) => {
+app.post('/api/createPractical', verifyToken, async (req, res) => {
   try {
     const { subjectName, numTasks, startTime, endTime } = req.body;
     const newPractical = new Practical({ subjectName, numTasks, startTime, endTime });
@@ -158,7 +158,7 @@ app.post('/api/practicals', verifyToken, async (req, res) => {
 });
 
 // Route to get all practicals
-app.get('/api/practicals', verifyToken, async (req, res) => {
+app.get('/api/practicals', async (req, res) => {
   try {
     const practicals = await Practical.find();
     res.status(200).json(practicals);
@@ -168,8 +168,8 @@ app.get('/api/practicals', verifyToken, async (req, res) => {
   }
 });
 
-// Route to get all exams
-app.get('/api/exams', verifyToken, async (req, res) => {
+// Route to get all exams (for students to view)
+app.get('/api/exams', async (req, res) => {
   try {
     const exams = await Exam.find();
     res.status(200).json(exams);
@@ -179,8 +179,9 @@ app.get('/api/exams', verifyToken, async (req, res) => {
   }
 });
 
+
 // Route to get an exam by ID
-app.get('/api/exams/:examId', verifyToken, async (req, res) => {
+app.get('/api/exams/:examId',async (req, res) => {
   try {
     const { examId } = req.params;
     const exam = await Exam.findById(examId);
@@ -194,8 +195,41 @@ app.get('/api/exams/:examId', verifyToken, async (req, res) => {
   }
 });
 
+// Route to update an exam
+app.put('/api/exams/:id', async (req, res) => {
+  try {
+    const examId = req.params.id;
+    const updatedData = req.body;
+    const updatedExam = await Exam.findByIdAndUpdate(examId, updatedData, { new: true, runValidators: true });
+    if (!updatedExam) {
+      return res.status(404).json({ error: 'Exam not found' });
+    }
+    res.status(200).json(updatedExam);
+  } catch (error) {
+    console.error('Error updating exam:', error);
+    res.status(500).json({ error: 'Failed to update exam' });
+  }
+});
+
+// Route to update a practical
+app.put('/api/practicals/:id', async (req, res) => {
+  try {
+    const practicalId = req.params.id;
+    const updatedData = req.body;
+    const updatedPractical = await Practical.findByIdAndUpdate(practicalId, updatedData, { new: true, runValidators: true });
+    if (!updatedPractical) {
+      return res.status(404).json({ error: 'Practical not found' });
+    }
+    res.status(200).json(updatedPractical);
+  } catch (error) {
+    console.error('Error updating practical:', error);
+    res.status(500).json({ error: 'Failed to update practical' });
+  }
+});
+
+
 // Route to submit exam answers
-app.post('/api/exams/:examId/submit', verifyToken, async (req, res) => {
+app.post('/api/exams/:examId/submit', async (req, res) => {
   try {
     const { examId } = req.params;
     const { answers } = req.body;
@@ -244,6 +278,8 @@ app.post('/api/change-password', verifyToken, async (req, res) => {
 
 
 
+
+
 // Define the login route
 app.post('/api/login', async (req, res) => {
   const { username, password, role } = req.body;
@@ -273,3 +309,4 @@ app.post('/api/login', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
