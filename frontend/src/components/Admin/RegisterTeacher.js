@@ -31,9 +31,23 @@ const RegisterTeacher = () => {
         password: hashedPassword
       };
 
+      const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('You must be logged in to register teacher');
+      return;
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+
       // Your Axios POST request to register the teacher
-      const response = await axios.post('http://localhost:5000/api/register/teacher', updatedFormData);
+      const response = await axios.post('http://localhost:5000/api/register/teacher', updatedFormData,config);
       console.log('Teacher registered successfully!', response.data);
+      alert('Teacher registered successfully!', response.data);
 
       // Reset the form after successful registration
       setFormData({

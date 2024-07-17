@@ -1,4 +1,3 @@
-// Exams.js (within StudentDashboard/Exams)
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -8,11 +7,13 @@ const Exams = () => {
   const navigate = useNavigate();
   const [exams, setExams] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchExams = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/exams');
+        const response = await axios.get('http://localhost:5000/api/exams/');
         const formattedExams = response.data.map(exam => ({
           ...exam,
           formattedStartTime: moment(exam.startTime).format('MMMM D, YYYY h:mm A'),
@@ -21,6 +22,9 @@ const Exams = () => {
         setExams(formattedExams);
       } catch (error) {
         console.error('Error fetching exams:', error);
+        setError('Failed to fetch exams. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -38,7 +42,7 @@ const Exams = () => {
   const handleStart = () => {
     const selectedExam = exams.find(exam => exam.selected);
     if (selectedExam) {
-      navigate(`/student/take-exam/${selectedExam._id}`); // Navigate to TakeExam page with exam ID
+      navigate(`/student/exams/take-exam/${selectedExam._id}`); // Navigate to TakeExam page with exam ID
     } else {
       alert('Please select an exam to start.');
     }
@@ -47,6 +51,14 @@ const Exams = () => {
   const filteredExams = exams.filter(exam =>
     exam.subjectName.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading) {
+    return <div>Loading...</div>; // Add a loading indicator
+  }
+
+  if (error) {
+    return <div>{error}</div>; // Display error message if fetching fails
+  }
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>

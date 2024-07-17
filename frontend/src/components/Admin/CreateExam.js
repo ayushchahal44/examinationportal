@@ -35,7 +35,7 @@ const CreateExam = () => {
     const token = localStorage.getItem('token');
 
     if (!token) {
-      alert('You must be logged in to change your password');
+      alert('You must be logged in to create exam');
       return;
     }
 

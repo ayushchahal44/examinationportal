@@ -106,7 +106,7 @@ const verifyToken = (req, res, next) => {
 // Routes
 
 // Route to handle student registration
-app.post('/api/register/student', async (req, res) => {
+app.post('/api/register/student',verifyToken, async (req, res) => {
   try {
     const { name, email, mobileNumber, enrollYear, password } = req.body;
     const newStudent = new Student({ name, email, mobileNumber, enrollYear, password });
@@ -119,7 +119,7 @@ app.post('/api/register/student', async (req, res) => {
 });
 
 // Route to handle teacher registration
-app.post('/api/register/teacher', async (req, res) => {
+app.post('/api/register/teacher',verifyToken, async (req, res) => {
   try {
     const { name, email, mobileNumber, department, password } = req.body;
     const newTeacher = new Teacher({ name, email, mobileNumber, department, password });
@@ -181,7 +181,7 @@ app.get('/api/exams', async (req, res) => {
 
 
 // Route to get an exam by ID
-app.get('/api/exams/:examId',async (req, res) => {
+app.get('/api/exams/:examId',verifyToken,async (req, res) => {
   try {
     const { examId } = req.params;
     const exam = await Exam.findById(examId);
@@ -194,6 +194,41 @@ app.get('/api/exams/:examId',async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch exam' });
   }
 });
+
+app.get('/api/user/email', verifyToken, (req, res) => {
+  const userEmail = req.user.email;
+  res.status(200).json({ email: userEmail });
+});
+
+
+// Example route handling exam submission
+app.post('/api/exams/:examId/submit', async (req, res) => {
+  const { examId } = req.params;
+  const { answers } = req.body;
+
+  try {
+    // Assuming `examId` is used to find and update the exam document in MongoDB
+    const exam = await Exam.findById(examId);
+
+    if (!exam) {
+      return res.status(404).json({ error: 'Exam not found' });
+    }
+
+    // Update exam document with student answers
+    exam.studentAnswers = answers;
+
+    // Save updated exam document
+    await exam.save();
+
+    res.status(200).json({ message: 'Exam submitted successfully' });
+  } catch (error) {
+    console.error('Error submitting exam:', error);
+    res.status(500).json({ error: 'Failed to submit exam. Please try again later.' });
+  }
+});
+
+
+
 
 // Route to update an exam
 app.put('/api/exams/:id', async (req, res) => {
@@ -229,20 +264,34 @@ app.put('/api/practicals/:id', async (req, res) => {
 
 
 // Route to submit exam answers
-app.post('/api/exams/:examId/submit', async (req, res) => {
+// Route to get an exam by ID (with authentication)
+app.get('/api/exams/:examId', verifyToken, async (req, res) => {
   try {
     const { examId } = req.params;
-    const { answers } = req.body;
+    const userEmail = req.user.email; // Get student's email from decoded JWT
 
-    // Implement your logic here to save answers to the exam document or another collection
-    // Example: await Exam.findByIdAndUpdate(examId, { $push: { submissions: { studentId: req.user.id, answers } } });
+    // Find the student based on the email fetched from decoded JWT
+    const student = await Student.findOne({ email: userEmail });
 
-    res.status(200).json({ message: 'Exam submitted successfully' });
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    // Fetch the exam only if the student is authorized to access it
+    const exam = await Exam.findById(examId);
+    if (!exam) {
+      return res.status(404).json({ error: 'Exam not found' });
+    }
+
+    // Optionally, you can check if the student is enrolled in the exam or any other access logic here
+
+    res.status(200).json(exam);
   } catch (error) {
-    console.error('Error submitting exam:', error);
-    res.status(500).json({ error: 'Failed to submit exam' });
+    console.error('Error fetching exam:', error);
+    res.status(500).json({ error: 'Failed to fetch exam' });
   }
 });
+
 
 
 // Route to handle password change
