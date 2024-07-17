@@ -65,11 +65,12 @@ const examSchema = new mongoose.Schema({
 });
 
 const practicalSchema = new mongoose.Schema({
-  subjectName: String,
-  numTasks: Number,
+  subjectName: { type: String, required: true },
+  numQuestions: { type: Number, required: true },
+  questions: { type: [String], required: true },
   startTime: { type: Date, required: true },
   endTime: { type: Date, required: true },
-  createdAt: { type: Date, default: Date.now },
+  examDate: { type: Date, required: true },
 });
 
 const Student = mongoose.model('Student', studentSchema);
@@ -145,11 +146,23 @@ app.post('/api/createExam',verifyToken, async (req, res) => {
 });
 
 // Route to handle practical creation
-app.post('/api/createPractical', verifyToken, async (req, res) => {
+app.post('/api/createPractical', async (req, res) => {
+  const { subjectName, numQuestions, questions, startTime, endTime, examDate } = req.body;
+
   try {
-    const { subjectName, numTasks, startTime, endTime } = req.body;
-    const newPractical = new Practical({ subjectName, numTasks, startTime, endTime });
+    // Create a new Practical instance
+    const newPractical = new Practical({
+      subjectName,
+      numQuestions,
+      questions,
+      startTime,
+      endTime,
+      examDate,
+    });
+
+    // Save to MongoDB
     const savedPractical = await newPractical.save();
+
     res.status(201).json(savedPractical);
   } catch (error) {
     console.error('Error creating practical:', error);
@@ -293,6 +306,37 @@ app.get('/api/exams/:examId', verifyToken, async (req, res) => {
 });
 
 
+app.get('/api/practical/:practicalId', verifyToken, async (req, res) => {
+  try {
+    const { practicalId } = req.params;
+    const userEmail = req.user.email; // Get student's email from decoded JWT
+
+    // Find the student based on the email fetched from decoded JWT
+    const student = await Student.findOne({ email: userEmail });
+
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    // Fetch the practical including questions/tasks
+    const practical = await Practical.findById(practicalId).populate('questions'); // Assuming 'questions' is the field name in the Practical schema
+
+    if (!practical) {
+      return res.status(404).json({ error: 'Practical not found' });
+    }
+
+    // Optionally, you can check if the student is authorized to access this practical here
+
+    res.status(200).json(practical);
+  } catch (error) {
+    console.error('Error fetching practical:', error);
+    res.status(500).json({ error: 'Failed to fetch practical' });
+  }
+});
+
+
+
+
 
 // Route to handle password change
 app.post('/api/change-password', verifyToken, async (req, res) => {
@@ -328,7 +372,6 @@ app.post('/api/change-password', verifyToken, async (req, res) => {
 
 
 
-
 // Define the login route
 app.post('/api/login', async (req, res) => {
   const { username, password, role } = req.body;
@@ -358,4 +401,5 @@ app.post('/api/login', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
 

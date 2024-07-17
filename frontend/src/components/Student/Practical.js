@@ -1,7 +1,8 @@
+// Practical.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import moment from 'moment'; // Import moment for date formatting
+import moment from 'moment';
 
 const Practical = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const Practical = () => {
   const handleStart = () => {
     const selectedPractical = practicals.find(practical => practical.selected);
     if (selectedPractical) {
-      navigate(`/practical/${selectedPractical._id}`);
+      navigate(`/student/practical/take-practical/${selectedPractical._id}`); // Corrected path to match the route definition in App.js
     } else {
       alert('Please select a practical to start.');
     }
